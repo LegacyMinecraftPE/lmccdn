@@ -171,16 +171,19 @@
         });
 
         function fetchFiles(type, search = '') {
+            const apiUrl = `https://api.github.com/repos/legacyminecraftpe/legacyminecraftpe.github.io/contents/filesarchive/${type}`;
+            
             $.ajax({
-                url: 'file_list.php',
+                url: apiUrl,
                 method: 'GET',
-                data: { type },
                 success: function (data) {
-                    const files = JSON.parse(data);
+                    const files = data
+                        .filter(item => item.type === 'file')
+                        .map(file => file.name);
                     displayFiles(files, search);
                 },
                 error: function () {
-                    alert('Error fetching file list');
+                    alert('Error fetching file list from GitHub API');
                 }
             });
         }
@@ -193,7 +196,7 @@
 
             if (filteredFiles.length > 0) {
                 filteredFiles.forEach(file => {
-                    fileList.append(`<li class="list-group-item"><a href="filesarchive/${currentType}/${file}">${file}</a></li>`);
+                    fileList.append(`<li class="list-group-item"><a href="https://raw.githubusercontent.com/legacyminecraftpe/legacyminecraftpe.github.io/main/filesarchive/${currentType}/${file}" download>${file}</a></li>`);
                 });
             } else {
                 fileList.append('<li class="list-group-item">No files found</li>');

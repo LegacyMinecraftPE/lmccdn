@@ -1,126 +1,242 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LegacyMinecraftPE</title>
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="bootstrap/bootstrap.3.darkly.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMC CDN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
     <style>
-        .navbar {
-            background-color: #34495e;
-            border-color: #2c3e50;
+        .main.container {
+            margin-top: 6em;
         }
-
-        .navbar-nav>li>a {
-            color: #ecf0f1;
+        .ui.file.list {
+            margin-top: 2em;
         }
-
-        .navbar-nav>li>a:hover {
-            color: gray !important;
-            background-color: #2c3e50;
-        }
-
-        .jumbotron {
-            background-color: #34495e;
-            color: #ecf0f1;
-        }
-
-        .navbar-brand {
-            color: #ecf0f1 !important;
-        }
-
-        .dropdown-toggle {
-            background-color: transparent !important;
-        }
-
-        .dropdown-toggle:focus,
-        .dropdown-toggle:active {
-            color: gray;
-        }
-
-        .dropdown-submenu {
-            position: relative;
-        }
-
-        .dropdown-submenu>.dropdown-menu {
-            top: 0;
-            left: 100%;
-            margin-top: -1px;
-        }
-
-        .dropdown-submenu:hover>.dropdown-menu {
-            display: block;
-        }
-
-        .dropdown-submenu>a:after {
-            content: " ";
+        .file-actions {
             float: right;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid #ecf0f1;
-            margin-top: 7px;
         }
-
-        .dropdown-submenu>a:hover:after {
-            border-top-color: #bdc3c7;
+        .storage-info {
+            margin-top: 2em;
         }
     </style>
 </head>
-
 <body>
-    <nav class="navbar navbar-inverse navbar-static-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="index.html">LegacyMinecraftPE</a>
+    <div class="ui fixed inverted blue menu">
+        <div class="ui container">
+            <a href="index.html" class="header item">Legacy Minecraft PE CDN</a>
+            <a href="index.html" class="active item">Files</a>
+            
+            <div class="right menu">
+                <div class="item">
+                    <div class="ui icon input">
+                        <input type="text" placeholder="Search..." id="searchInput">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
             </div>
-            <ul class="nav navbar-nav">
-                <!--<li><a href="index.html">1</a></li>-->
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Server <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-header">Server software</li>
-                        <li class="dropdown-submenu">
-                            <a href="#">NostalgiaCore</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="https://github.com/oldminecraftcommunity/NostalgiaCore-backport-old/tree/0.7.6">0.7.6</a></li>
-                                <li><a href="https://github.com/kotyaralih/NostalgiaCore/">0.8.1</a></li>
-                                <li><a href="https://github.com/oldminecraftcommunity/NostalgiaCore-0.9.5">0.9.5</a></li>
-                                <li><a href="https://github.com/kotyaralih/NostalgiaCore/tree/mc-0-10">0.10</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="https://legacyminecraftpe.github.io/LegacyCoreVersions/index.html">PocketMine-MP</a></li>
-                        <li><a href="https://legacyminecraftpe.github.io/LegacyCoreVersions/nukkit.html">Nukkit</a></li>
-                        <li class="dropdown-header">For server</li>
-                        <li class="dropdown-submenu">
-                            <a href="#">Plugins</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="https://www.nostalgiaforum.xyz/index.php?resources/categories/7/">PocketMine-MP & NostalgiaCore</a></li>
-                                <li><a href="https://www.nostalgiaforum.xyz/index.php?resources/categories/28/">Nukkit</a></li>
-                                <li><a href="https://www.nostalgiaforum.xyz/index.php?resources/categories/34/">Other cores</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <!--<li><a href="">3</a></li>-->
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="jumbotron text-center">
-            <h1>LegacyMinecraftPE</h1>
-            <p>Saving Minecraft PE Alpha History</p>
-        </div>
-
-        <div class="list-group">
-            <a href="filesarchive.html" class="list-group-item">[ARCHIVES] Collection of content for Minecraft PE Alpha</a>
         </div>
     </div>
 
-    <script src="bootstrap/jquery.min.js"></script>
-    <script src="bootstrap/bootstrap.min.js"></script>
-</body>
+    <main class="ui main container">
+        <div class="ui grid">
+            <div class="four wide column">
+                <div class="ui vertical fluid menu">
+                    <a class="item active" data-category="all">
+                        <i class="folder icon"></i>
+                        All
+                    </a>
+                    <a class="item" data-category="plugins">
+                        <i class="puzzle piece icon"></i>
+                        Plugins
+                    </a>
+                    <a class="item" data-category="mods-tools">
+                        <i class="cog icon"></i>
+                        Mods / Tools
+                    </a>
+                    <a class="item" data-category="textures">
+                        <i class="paint brush icon"></i>
+                        Textures
+                    </a>
+                    <a class="item" data-category="maps">
+                        <i class="map icon"></i>
+                        Maps
+                    </a>
+                </div>
+            </div>
 
+            <div class="twelve wide column">
+                <div class="ui segment">
+                    <div class="ui relaxed divided list file-list" id="fileList"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="ui inverted vertical footer segment" style="margin-top: 3em; padding: 2em 0;">
+        <div class="ui container">
+            <div class="ui stackable inverted divided grid">
+                <div class="eight wide column">
+                    <h4 class="ui inverted header">Legacy Minecraft PE</h4>
+                    <p>Saving the history of Minecraft PE Alpha</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+
+    <script>
+       let currentType = '';
+const fileList = document.getElementById('fileList');
+const searchInput = document.getElementById('searchInput');
+const categories = ['plugins', 'mods-tools', 'textures', 'maps'];
+
+function initializeFileSystem() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type') || 'all';
+    const search = urlParams.get('search');
+
+    currentType = type;
+    document.title = currentType.replace('-', ' ').toUpperCase();
+    
+    const menuItem = document.querySelector(`.item[data-category="${currentType}"]`);
+    if (menuItem) {
+        document.querySelectorAll('.item').forEach(item => item.classList.remove('active'));
+        menuItem.classList.add('active');
+    }
+
+    if (search) {
+        searchInput.value = search;
+    }
+
+    fetchFiles(currentType, search || '');
+    setupEventListeners();
+}
+
+function setupEventListeners() {
+    document.querySelectorAll('.ui.vertical.menu .item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentType = e.currentTarget.getAttribute('data-category');
+            document.title = currentType.replace('-', ' ').toUpperCase();
+            
+            document.querySelectorAll('.item').forEach(i => i.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            
+            const newUrl = `${window.location.pathname}?type=${currentType}`;
+            history.pushState(null, '', newUrl);
+            
+            fetchFiles(currentType);
+        });
+    });
+
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const newUrl = `${window.location.pathname}?type=${currentType}&search=${encodeURIComponent(searchTerm)}`;
+        history.pushState(null, '', newUrl);
+        fetchFiles(currentType, searchTerm);
+    });
+}
+
+async function fetchFiles(type, search = '') {
+    const basePath = 'data';
+    let allFiles = [];
+
+    if (type === 'all') {
+        for (const category of categories) {
+            try {
+                const response = await fetch(`${basePath}/${category}`);
+                if (!response.ok) continue;
+                const text = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const files = Array.from(doc.querySelectorAll('a'))
+                    .map(a => a.href)
+                    .filter(href => !href.endsWith('/'))
+                    .map(href => href.split('/').pop())
+                    .map(filename => ({ name: filename, category }));
+                allFiles = [...allFiles, ...files];
+            } catch (error) {
+                console.error(`Error fetching files from ${category}:`, error);
+            }
+        }
+        displayFiles(allFiles, search);
+    } else {
+        try {
+            const response = await fetch(`${basePath}/${type}`);
+            if (!response.ok) throw new Error('Failed to fetch directory listing');
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const files = Array.from(doc.querySelectorAll('a'))
+                .map(a => a.href)
+                .filter(href => !href.endsWith('/'))
+                .map(href => href.split('/').pop())
+                .map(filename => ({ name: filename, category: type }));
+            displayFiles(files, search);
+        } catch (error) {
+            console.error('Error fetching files:', error);
+            fileList.innerHTML = '<div class="item">Error loading files</div>';
+        }
+    }
+}
+
+function displayFiles(files, search) {
+    const filteredFiles = files.filter(file => 
+        file.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (filteredFiles.length > 0) {
+        fileList.innerHTML = filteredFiles.map(file => `
+            <div class="item">
+                <i class="large ${getFileIcon(file.name)} middle aligned icon"></i>
+                <div class="content">
+                    <a class="header" href="data/${file.category}/${file.name}" download>${file.name}</a>
+                    <div class="description">${file.category}</div>
+                    <div class="file-actions">
+                        <button class="ui icon button" onclick="downloadFile('${file.category}', '${file.name}')">
+                            <i class="download icon"></i>
+                        </button>
+                        <button class="ui icon button" onclick="copyLink('${file.category}', '${file.name}')">
+                            <i class="linkify icon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        fileList.innerHTML = '<div class="item">No files found</div>';
+    }
+}
+
+function getFileIcon(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    const icons = {
+        'php': 'php',
+        'js': 'js',
+        'zip': 'file archive outline',
+        'jar': 'coffee',
+        'mod': 'file alternative outline',
+        'png': 'file image outline',
+        'jpg': 'file image outline',
+        'jpeg': 'file image outline'
+    };
+    return icons[ext] || 'file outline';
+}
+
+function downloadFile(category, filename) {
+    window.location.href = `filesarchive/${category}/${filename}`;
+}
+
+function copyLink(category, filename) {
+    const link = `${window.location.origin}/filesarchive/${category}/${filename}`;
+    navigator.clipboard.writeText(link)
+        .then(() => alert('Link copied to clipboard!'))
+        .catch(err => console.error('Failed to copy link:', err));
+}
+
+document.addEventListener('DOMContentLoaded', initializeFileSystem);
+    </script>
+</body>
 </html>

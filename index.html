@@ -6,26 +6,17 @@
     <title>LMC CDN</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
     <style>
-        .main.container {
-            margin-top: 6em;
-        }
-        .ui.file.list {
-            margin-top: 2em;
-        }
-        .file-actions {
-            float: right;
-        }
-        .storage-info {
-            margin-top: 2em;
-        }
+        .main.container { margin-top: 6em; }
+        .ui.file.list { margin-top: 2em; }
+        .file-actions { float: right; }
+        .storage-info { margin-top: 2em; }
     </style>
 </head>
 <body>
     <div class="ui fixed inverted blue menu">
         <div class="ui container">
-            <a href="index.html" class="header item">Legacy Minecraft PE CDN</a>
-            <a href="index.html" class="active item">Files</a>
-            
+            <a href="./" class="header item">Legacy Minecraft PE CDN</a>
+            <a href="./" class="active item">Files</a>
             <div class="right menu">
                 <div class="item">
                     <div class="ui icon input">
@@ -87,67 +78,88 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 
     <script>
-       let currentType = '';
-const fileList = document.getElementById('fileList');
-const searchInput = document.getElementById('searchInput');
-const categories = ['plugins', 'mods-tools', 'texture-packs', 'maps'];
+    let currentType = '';
+    const fileList = document.getElementById('fileList');
+    const searchInput = document.getElementById('searchInput');
+    const categories = ['plugins', 'mods-tools', 'texture-packs', 'maps'];
+    const repoName = window.location.pathname.split('/')[1] || '';
+    const basePath = repoName ? `/${repoName}` : '';
 
-function initializeFileSystem() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const type = urlParams.get('type') || 'all';
-    const search = urlParams.get('search');
+    function initializeFileSystem() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type') || 'all';
+        const search = urlParams.get('search');
 
-    currentType = type;
-    document.title = currentType.replace('-', ' ').toUpperCase();
-    
-    const menuItem = document.querySelector(`.item[data-category="${currentType}"]`);
-    if (menuItem) {
-        document.querySelectorAll('.item').forEach(item => item.classList.remove('active'));
-        menuItem.classList.add('active');
+        currentType = type;
+        document.title = currentType.replace('-', ' ').toUpperCase();
+        
+        const menuItem = document.querySelector(`.item[data-category="${currentType}"]`);
+        if (menuItem) {
+            document.querySelectorAll('.item').forEach(item => item.classList.remove('active'));
+            menuItem.classList.add('active');
+        }
+
+        if (search) {
+            searchInput.value = search;
+        }
+
+        fetchFiles(currentType, search || '');
+        setupEventListeners();
     }
 
-    if (search) {
-        searchInput.value = search;
-    }
-
-    fetchFiles(currentType, search || '');
-    setupEventListeners();
-}
-
-function setupEventListeners() {
-    document.querySelectorAll('.ui.vertical.menu .item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentType = e.currentTarget.getAttribute('data-category');
-            document.title = currentType.replace('-', ' ').toUpperCase();
-            
-            document.querySelectorAll('.item').forEach(i => i.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            
-            const newUrl = `${window.location.pathname}?type=${currentType}`;
-            history.pushState(null, '', newUrl);
-            
-            fetchFiles(currentType);
+    function setupEventListeners() {
+        document.querySelectorAll('.ui.vertical.menu .item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentType = e.currentTarget.getAttribute('data-category');
+                document.title = currentType.replace('-', ' ').toUpperCase();
+                
+                document.querySelectorAll('.item').forEach(i => i.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                
+                const newUrl = `${basePath}/?type=${currentType}`;
+                history.pushState(null, '', newUrl);
+                
+                fetchFiles(currentType);
+            });
         });
-    });
 
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const newUrl = `${window.location.pathname}?type=${currentType}&search=${encodeURIComponent(searchTerm)}`;
-        history.pushState(null, '', newUrl);
-        fetchFiles(currentType, searchTerm);
-    });
-}
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const newUrl = `${basePath}/?type=${currentType}&search=${encodeURIComponent(searchTerm)}`;
+            history.pushState(null, '', newUrl);
+            fetchFiles(currentType, searchTerm);
+        });
+    }
 
-async function fetchFiles(type, search = '') {
-    const basePath = 'filesarchive';
-    let allFiles = [];
+    async function fetchFiles(type, search = '') {
+        const filesPath = `${basePath}/filesarchive`;
+        let allFiles = [];
 
-    if (type === 'all') {
-        for (const category of categories) {
+        if (type === 'all') {
+            for (const category of categories) {
+                try {
+                    const response = await fetch(`${filesPath}/${category}`);
+                    if (!response.ok) continue;
+                    const text = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(text, 'text/html');
+                    const files = Array.from(doc.querySelectorAll('a'))
+                        .map(a => a.href)
+                        .filter(href => !href.endsWith('/'))
+                        .map(href => href.split('/').pop())
+                        .filter(Boolean)
+                        .map(filename => ({ name: filename, category }));
+                    allFiles = [...allFiles, ...files];
+                } catch (error) {
+                    console.error(`Error fetching files from ${category}:`, error);
+                }
+            }
+            displayFiles(allFiles, search);
+        } else {
             try {
-                const response = await fetch(`${basePath}/${category}`);
-                if (!response.ok) continue;
+                const response = await fetch(`${filesPath}/${type}`);
+                if (!response.ok) throw new Error('Failed to fetch directory listing');
                 const text = await response.text();
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(text, 'text/html');
@@ -155,88 +167,71 @@ async function fetchFiles(type, search = '') {
                     .map(a => a.href)
                     .filter(href => !href.endsWith('/'))
                     .map(href => href.split('/').pop())
-                    .map(filename => ({ name: filename, category }));
-                allFiles = [...allFiles, ...files];
+                    .filter(Boolean)
+                    .map(filename => ({ name: filename, category: type }));
+                displayFiles(files, search);
             } catch (error) {
-                console.error(`Error fetching files from ${category}:`, error);
+                console.error('Error fetching files:', error);
+                fileList.innerHTML = '<div class="item">Error loading files</div>';
             }
         }
-        displayFiles(allFiles, search);
-    } else {
-        try {
-            const response = await fetch(`${basePath}/${type}`);
-            if (!response.ok) throw new Error('Failed to fetch directory listing');
-            const text = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, 'text/html');
-            const files = Array.from(doc.querySelectorAll('a'))
-                .map(a => a.href)
-                .filter(href => !href.endsWith('/'))
-                .map(href => href.split('/').pop())
-                .map(filename => ({ name: filename, category: type }));
-            displayFiles(files, search);
-        } catch (error) {
-            console.error('Error fetching files:', error);
-            fileList.innerHTML = '<div class="item">Error loading files</div>';
-        }
     }
-}
 
-function displayFiles(files, search) {
-    const filteredFiles = files.filter(file => 
-        file.name.toLowerCase().includes(search.toLowerCase())
-    );
+    function displayFiles(files, search) {
+        const filteredFiles = files.filter(file => 
+            file.name.toLowerCase().includes(search.toLowerCase())
+        );
 
-    if (filteredFiles.length > 0) {
-        fileList.innerHTML = filteredFiles.map(file => `
-            <div class="item">
-                <i class="large ${getFileIcon(file.name)} middle aligned icon"></i>
-                <div class="content">
-                    <a class="header" href="filesarchive/${file.category}/${file.name}" download>${file.name}</a>
-                    <div class="description">${file.category}</div>
-                    <div class="file-actions">
-                        <button class="ui icon button" onclick="downloadFile('${file.category}', '${file.name}')">
-                            <i class="download icon"></i>
-                        </button>
-                        <button class="ui icon button" onclick="copyLink('${file.category}', '${file.name}')">
-                            <i class="linkify icon"></i>
-                        </button>
+        if (filteredFiles.length > 0) {
+            fileList.innerHTML = filteredFiles.map(file => `
+                <div class="item">
+                    <i class="large ${getFileIcon(file.name)} middle aligned icon"></i>
+                    <div class="content">
+                        <a class="header" href="${basePath}/filesarchive/${file.category}/${file.name}" download>${file.name}</a>
+                        <div class="description">${file.category}</div>
+                        <div class="file-actions">
+                            <button class="ui icon button" onclick="downloadFile('${file.category}', '${file.name}')">
+                                <i class="download icon"></i>
+                            </button>
+                            <button class="ui icon button" onclick="copyLink('${file.category}', '${file.name}')">
+                                <i class="linkify icon"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
-    } else {
-        fileList.innerHTML = '<div class="item">No files found</div>';
+            `).join('');
+        } else {
+            fileList.innerHTML = '<div class="item">No files found</div>';
+        }
     }
-}
 
-function getFileIcon(filename) {
-    const ext = filename.split('.').pop().toLowerCase();
-    const icons = {
-        'php': 'php',
-        'js': 'js',
-        'zip': 'file archive outline',
-        'jar': 'coffee',
-        'mod': 'file alternative outline',
-        'png': 'file image outline',
-        'jpg': 'file image outline',
-        'jpeg': 'file image outline'
-    };
-    return icons[ext] || 'file outline';
-}
+    function getFileIcon(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const icons = {
+            'php': 'php',
+            'js': 'js',
+            'zip': 'file archive outline',
+            'jar': 'coffee',
+            'mod': 'file alternative outline',
+            'png': 'file image outline',
+            'jpg': 'file image outline',
+            'jpeg': 'file image outline'
+        };
+        return icons[ext] || 'file outline';
+    }
 
-function downloadFile(category, filename) {
-    window.location.href = `filesarchive/${category}/${filename}`;
-}
+    function downloadFile(category, filename) {
+        window.location.href = `${basePath}/filesarchive/${category}/${filename}`;
+    }
 
-function copyLink(category, filename) {
-    const link = `${window.location.origin}/filesarchive/${category}/${filename}`;
-    navigator.clipboard.writeText(link)
-        .then(() => alert('Link copied to clipboard!'))
-        .catch(err => console.error('Failed to copy link:', err));
-}
+    function copyLink(category, filename) {
+        const link = `${window.location.origin}${basePath}/filesarchive/${category}/${filename}`;
+        navigator.clipboard.writeText(link)
+            .then(() => alert('Link copied to clipboard!'))
+            .catch(err => console.error('Failed to copy link:', err));
+    }
 
-document.addEventListener('DOMContentLoaded', initializeFileSystem);
+    document.addEventListener('DOMContentLoaded', initializeFileSystem);
     </script>
 </body>
 </html>
